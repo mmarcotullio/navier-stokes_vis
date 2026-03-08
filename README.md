@@ -36,6 +36,6 @@ cd ../..
 
 **5. Run**
 ```bash
-bash ./start.sh
+./start.sh
 ```
 
