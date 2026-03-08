@@ -1,6 +1,5 @@
 # Forward and Inverse Modeling of the 3D Incompressible (Steady-State) Navier–Stokes Equations with Neural Networks ... A Story in Machine Learning-Driven Computational Fluid Dynamics
 
-An interactive visualization of neural-network-based CFD surrogate models. A 3D Fourier Neural Operator (FNO) predicts steady-state flow fields around a sphere in a pipe, and a CNN-based inverse model recovers the Reynolds number from the predicted flow field.
 
 ## Requirements
 
@@ -20,7 +19,7 @@ git lfs install
 git lfs pull
 
 # 3. Create Python virtual environment and install dependencies
-python -m venv venv
+python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 
