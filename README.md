@@ -1,30 +1,35 @@
 # Forward and Inverse Modeling of the 3D Incompressible (Steady-State) Navier–Stokes Equations with Neural Networks ... A Story in Machine Learning-Driven Computational Fluid Dynamics
 
+An interactive visualization of neural-network-based CFD surrogate models. A 3D Fourier Neural Operator (FNO) predicts steady-state flow fields around a sphere in a pipe, and a CNN-based inverse model recovers the Reynolds number from the predicted flow field.
+
+## Requirements
+
+- Python 3.10+
+- Node.js 18+
+- Git LFS
+
 ## Setup
 
-1. Pull model files via Git LFS (required — models are ~256 MB):
-   ```bash
-   git lfs install
-   git lfs pull
-   ```
-
-2. Create a Python virtual environment and install dependencies:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate
-   pip install -r requirements.txt
-   ```
-
-3. Install Node dependencies:
-   ```bash
-   cd main_vis/app && npm install
-   cd ../../story/app && npm install
-   ```
-
-## Run
-
-From the repo root:
-
 ```bash
+# 1. Clone the repo
+git clone https://github.com/mmarcotullio/navier-stokes_vis.git
+cd navier-stokes_vis
+
+# 2. Pull model files 
+git lfs install
+git lfs pull
+
+# 3. Create Python virtual environment and install dependencies
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+
+# 4. Install Node dependencies
+cd main_vis/app && npm install
+cd ../../story/app && npm install
+cd ../..
+
+# 5. Run
 bash start.sh
 ```
+
