@@ -2,14 +2,20 @@
 
 ## Setup
 
-1. Create a Python virtual environment and install dependencies:
+1. Pull model files via Git LFS (required — models are ~256 MB):
+   ```bash
+   git lfs install
+   git lfs pull
+   ```
+
+2. Create a Python virtual environment and install dependencies:
    ```bash
    python -m venv venv
    source venv/bin/activate
    pip install -r requirements.txt
    ```
 
-2. Install Node dependencies:
+3. Install Node dependencies:
    ```bash
    cd main_vis/app && npm install
    cd ../../story/app && npm install
@@ -22,6 +28,3 @@ From the repo root:
 ```bash
 bash start.sh
 ```
-
-- 3D visualization: http://localhost:5173
-- Story app: http://localhost:5174
