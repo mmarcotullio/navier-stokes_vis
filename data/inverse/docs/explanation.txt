@@ -1,0 +1,88 @@
+Inverse Model — High Level Explanation
+=======================================
+
+The goal is to answer a simple question: given a snapshot of a fluid flow field, what
+physical conditions produced it? Specifically, the model recovers the Reynolds number (Re)
+— the dimensionless ratio of inertial to viscous forces — from the 3D velocity and pressure
+fields inside a pipe with a sphere obstacle.
+
+This is an inverse problem. Normally you would run a CFD simulation forward: specify Re and
+inlet velocity, and the solver gives you the flow field. Here the direction is reversed: the
+flow field is the input, and the physical parameters are the output.
+
+
+The Two-Stage Pipeline
+-----------------------
+The system is split into two sequential steps:
+
+  Stage 1 — Inlet velocity (U_in)
+    U_in is read directly from metadata rather than predicted. This removes one source of
+    ambiguity before the harder regression begins. In a deployment scenario without metadata,
+    U_in would be estimated from the mean upstream axial velocity using a simple linear fit.
+
+  Stage 2 — Reynolds number (Re)
+    A 3D convolutional neural network (CNN3DInverse) takes the full flow field as input and
+    predicts Re. This is the core of the system.
+
+
+Preparing the Input
+--------------------
+Raw velocity and pressure values depend on how fast the fluid is moving (U_in), so they
+cannot be compared fairly across cases with different inlet speeds. Before feeding data to
+the network, every channel is made dimensionless by dividing by U_in or U_in squared:
+
+  - axial velocity        / U_in
+  - lateral velocities    / U_in
+  - pressure              / U_in squared
+  - axial pressure grad   / U_in squared
+  - vorticity magnitude   / U_in
+
+This normalisation means the network only has to learn the Re-dependent shape of the flow,
+not its overall magnitude. Each channel is then z-score standardised using statistics
+computed over the training set.
+
+
+How the Network Works
+----------------------
+The network processes a 3D voxel grid (265 x 20 x 20 cells) representing the pipe interior.
+It uses five stacked residual blocks — each block applies two 3D convolutions, adds the
+input back via a shortcut connection, and then re-weights its own channels using a
+Squeeze-and-Excitation (SE) attention module.
+
+The residual shortcut connections serve two purposes: they prevent the gradient from
+vanishing during training, and they let the network learn small corrections on top of a
+simpler representation rather than having to learn everything from scratch.
+
+The SE attention module learns which of the six input channels matters most for a given
+prediction. At low Re the axial pressure gradient is the most diagnostic signal; at high Re
+vorticity becomes more important. SE lets the network discover and exploit this
+automatically.
+
+The kernels are elongated along the pipe axis (5 voxels axially, 3 laterally) to match the
+pipe's 13:1 aspect ratio, and max-pooling progressively shrinks the spatial dimensions so
+that by the final block the network has an effective field of view spanning the entire pipe
+length.
+
+A global average pooling layer then collapses the remaining spatial dimensions into a single
+256-dimensional vector, which is passed through two fully connected layers to produce a
+single scalar — the predicted Re, normalised to the range [0, 1].
+
+
+From Network Output to Physical Re
+------------------------------------
+Re spans a decade from 100 to 1000. Training on a linear scale would cause the network to
+pay less attention to errors at the low end. Instead, the target is log-normalised:
+
+  Re_norm = (log(Re) - log(100)) / (log(1000) - log(100))
+
+This maps Re=100 to 0 and Re=1000 to 1, with equal loss sensitivity to relative changes
+across the full range. At inference the output is inverted back to physical units.
+
+
+Robustness at Inference
+------------------------
+At test time, each sample is passed through the network eight times — once for each of the
+eight rotational and reflection symmetries of a circular pipe (the D4 group). The eight
+predictions are averaged. This test-time augmentation reduces variance and typically
+improves accuracy by 10-20% over a single forward pass, at the cost of eight times the
+compute.

@@ -1,0 +1,50 @@
+Relevant Papers for CNN3DInverse Inverse Modelling
+===================================================
+
+1. Guo, Li & Iyer — Convolutional Neural Networks for Steady Flow Approximation (KDD 2016)
+   https://dl.acm.org/doi/10.1145/2939672.2939738
+   https://www.kdd.org/kdd2016/papers/files/adp1175-guoAT3.pdf
+
+   The closest architectural ancestor. They rasterise CFD domains into voxel grids and train
+   a CNN to predict velocity/pressure fields, using the geometry as a binary mask input — the
+   same fast-path/voxel-grid pipeline VoxelCFDDataset uses. The paper also studies steady
+   laminar flows and discusses the trade-off between spatial resolution and memory, which
+   motivated the 265x20x20 grid choice.
+
+2. He, Zhang, Ren & Sun — Deep Residual Learning for Image Recognition (CVPR 2016)
+   https://arxiv.org/abs/1512.03385
+   https://ieeexplore.ieee.org/document/7780459
+
+   The direct origin of ResBlock3d. The 1x1 projection shortcut for changing channel depth,
+   pre-activation with BN->ReLU before each conv, and the observation that residual connections
+   are critical when training on limited data (~900 cases) are all design points inherited from
+   this paper.
+
+3. Hu, Shen & Sun — Squeeze-and-Excitation Networks (CVPR 2018)
+   https://arxiv.org/abs/1709.01507
+   https://openaccess.thecvf.com/content_cvpr_2018/html/Hu_Squeeze-and-Excitation_Networks_CVPR_2018_paper.html
+
+   SEBlock is a verbatim implementation of this paper (global avg pool -> FC/8 -> ReLU -> FC
+   -> Sigmoid -> channel-wise scale, reduction ratio 8). The physical justification is that
+   different channels (dp/dx vs |omega|) carry different information at different Re regimes —
+   precisely the kind of inter-channel dependency SE was designed to exploit.
+
+4. Li et al. — Fourier Neural Operator for Parametric Partial Differential Equations (ICLR 2021)
+   https://arxiv.org/abs/2010.08895
+   https://openreview.net/forum?id=c8P9NQVtmnO
+
+   The FNO3d forward model in generate_fno_data.py that produces all 3,000 training cases is
+   the architecture from this paper. The pipeline is FNO (forward, cheap) -> CNN (inverse,
+   fast), so FNO's spectral resolution limits (modes 16x10x10) directly explain why the voxel
+   grid is fixed at 265x20x20.
+
+5. Raissi, Yazdani & Karniadakis — Hidden Fluid Mechanics (Science, 2020)
+   https://www.science.org/doi/10.1126/science.aaw4741
+   https://pubmed.ncbi.nlm.nih.gov/32001523/
+
+   The most directly comparable inverse problem paper: given velocity/pressure observations,
+   infer hidden flow quantities (including Re). Where this implementation uses a trained
+   discriminative CNN, they use a physics-informed network constrained by Navier-Stokes. The
+   two papers bracket the design space — data-driven regression (CNN3DInverse) vs
+   physics-constrained optimisation (HFM) — and directly motivate using all six dimensionless
+   channels (the same observables HFM uses) as input.
