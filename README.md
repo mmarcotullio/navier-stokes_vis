@@ -29,6 +29,6 @@ cd ../../story/app && npm install
 cd ../..
 
 # 5. Run
-bash start.sh
+bash ./start.sh
 ```
 
