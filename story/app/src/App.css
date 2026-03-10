@@ -88,7 +88,7 @@ a:hover { text-decoration: underline; }
 .home-cards {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 1rem;
+  gap: 1.5rem;
   padding: 3vh 8vw 1.5vh;
 }
 

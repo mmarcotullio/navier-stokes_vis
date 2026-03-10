@@ -23,7 +23,7 @@ const SECTION_COMPONENTS = {
   demo:       MainVisualization,
 };
 
-const V = { display: "block", width: "100%", height: 130 };
+const V = { display: "block", width: "100%", aspectRatio: "16/9" };
 
 const CARD_VISUALS = {
   // Background image
