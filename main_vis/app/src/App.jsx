@@ -6,7 +6,7 @@ import Heatmap from "./Heatmap.jsx";
 import InverseHeatmap from "./InverseHeatmap.jsx";
 import InverseToolPanel from "./InverseToolPanel.jsx";
 
-// ── Colormap: Moreland Cool-to-Warm (ParaView default) ───────────────────────
+// ── Colormap: Moreland Cool-to-Warm (like in ParaView) ───────────────────────
 // Control points from Kenneth Moreland, "Diverging Color Maps for Scientific
 // Visualization" (2009).  Interpolated in sRGB as a close approximation.
 const COLORMAP_STOPS = [

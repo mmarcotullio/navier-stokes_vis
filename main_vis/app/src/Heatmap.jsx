@@ -6,7 +6,6 @@ const R_PIPE = 0.5;
 const CYL_X  = 3.0;
 const CYL_R  = 0.25;
 
-// 1.5× scale: 108 px per metre on both axes → true 10:1 physical aspect
 const PX_PER_M = 108;
 const IW = PX_PER_M * 10;   // 1080 px  (x: 0 → 10 m)
 const IH = PX_PER_M * 1;    //  108 px  (z: −0.5 → 0.5 m)
@@ -23,14 +22,10 @@ export default function Heatmap({ sliceData, colorMode, colorFn, vmin, vmax, loa
   const displayH = Math.round(displayW * H / W);
   const dragStartRef = useRef(null);
 
-  // Clamp current width whenever the available canvas space shrinks
   useEffect(() => {
     setDisplayW(w => Math.min(w, maxWidth));
   }, [maxWidth]);
 
-  // Keep latest colorMode/vmin/vmax in refs so D3 can read them without
-  // being in the effect dependency array — prevents re-renders on every
-  // toggle/slider change before new sliceData has actually arrived.
   const colorModeRef = useRef(colorMode);
   colorModeRef.current = colorMode;
   const vminRef = useRef(vmin);

@@ -68,7 +68,6 @@ export default function InverseToolPanel({ Re, uIn, res, onVisualizeInverse, onR
       if (data.error) throw new Error(data.error);
       onVisualizeInverse?.(data.slice, result.re_pred);
     } catch (_err) {
-      // silently ignore — forward model errors are secondary here
     } finally {
       setVisLoading(false);
     }

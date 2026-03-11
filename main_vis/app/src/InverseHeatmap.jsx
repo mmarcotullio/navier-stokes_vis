@@ -71,8 +71,7 @@ export default function InverseHeatmap({ sliceData, rePred, colorMode, colorFn, 
       const delta = startX - ev.clientX;  // positive = drag left = expand
       const newW  = Math.max(MIN_W, Math.min(MAX_W, startW + delta));
       setDisplayW(newW);
-      // When anchored by left (after a drag), recompute left from the start
-      // so right edge stays fixed — avoids cumulative drift on each event
+
       if (startLeft !== null) {
         setPos(p => p ? { ...p, left: startLeft - (newW - startW) } : p);
       }

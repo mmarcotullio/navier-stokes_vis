@@ -1,7 +1,3 @@
-# inverse_tool.py
-# Self-contained inverse modeling module.
-# Architecture copied from inverse/model.py; preprocessing from inverse/dataset.py.
-
 import os
 import json
 import math

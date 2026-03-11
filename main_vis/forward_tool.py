@@ -1,7 +1,4 @@
 # forward_tool.py
-# Inference-relevant code copied from forward/fno_model/
-# (SpectralConv3d, FNO3d from fno_model.py; helpers from fno_dataset.py)
-
 import torch
 import torch.nn as nn
 import torch.fft
